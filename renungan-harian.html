@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sabda Pagi · Daily Devotional</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream:    #f5efe6;
+      --cream2:   #ede3d5;
+      --warm1:    #c8a882;
+      --warm2:    #a07850;
+      --brown:    #6b4c2a;
+      --dark:     #3a2510;
+      --gold:     #d4a84b;
+      --gold2:    #e8c97e;
+      --text:     #3a2510;
+      --muted:    #8a6a4a;
+      --white:    #fffdf9;
+      --shadow:   rgba(58,37,16,0.15);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── TEXTURE OVERLAY ── */
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top:0; z-index:100;
+      background: rgba(245,239,230,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--cream2);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-family:'Playfair Display', serif;
+      font-size:1.5rem; font-weight:700;
+      color: var(--brown);
+      display:flex; align-items:center; gap:0.5rem;
+    }
+    .logo span { color: var(--gold); }
+    .header-right { display:flex; align-items:center; gap:1rem; }
+    .lang-switch {
+      display:flex; border-radius:20px; overflow:hidden;
+      border: 1px solid var(--warm1); font-size:0.8rem; font-weight:500;
+    }
+    .lang-btn {
+      padding:0.3rem 0.8rem; cursor:pointer; border:none;
+      background:transparent; color:var(--muted); font-family:'DM Sans',sans-serif;
+      transition: background 0.2s, color 0.2s;
+    }
+    .lang-btn.active { background:var(--brown); color:var(--white); }
+    .notif-btn {
+      display:flex; align-items:center; gap:0.4rem;
+      padding:0.4rem 1rem; border-radius:20px;
+      background:var(--gold); color:var(--dark); border:none;
+      cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .notif-btn:hover { transform:translateY(-1px); box-shadow: 0 4px 12px rgba(212,168,75,0.4); }
+    .notif-btn.active-notif { background:var(--brown); color:var(--cream); }
+
+    /* ── HERO ── */
+    .hero {
+      position:relative; z-index:1;
+      text-align:center; padding:4rem 1.5rem 2.5rem;
+      background: linear-gradient(180deg, var(--cream2) 0%, var(--cream) 100%);
+    }
+    .date-badge {
+      display:inline-block;
+      font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase;
+      color:var(--muted); margin-bottom:0.6rem;
+    }
+    .hero h1 {
+      font-family:'Playfair Display', serif;
+      font-size:clamp(2rem, 5vw, 3.2rem);
+      font-weight:700; color:var(--brown); line-height:1.2;
+      margin-bottom:0.4rem;
+    }
+    .hero h1 em { color:var(--gold2); font-style:italic; }
+    .hero-sub {
+      font-size:0.9rem; color:var(--muted); max-width:400px; margin:0 auto;
+    }
+    .divider {
+      display:block; width:60px; height:2px;
+      background: linear-gradient(to right, var(--gold), var(--warm1));
+      margin: 1.2rem auto;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      position:relative; z-index:1;
+      max-width:960px; margin:0 auto; padding:2rem 1.5rem 5rem;
+      display:grid; grid-template-columns:1fr;
+      gap:2rem;
+    }
+    @media(min-width:720px){
+      main { grid-template-columns: 1.4fr 1fr; }
+      .full-width { grid-column: 1 / -1; }
+    }
+
+    /* ── CARD BASE ── */
+    .card {
+      background:var(--white);
+      border-radius:20px;
+      border:1px solid var(--cream2);
+      box-shadow: 0 2px 20px var(--shadow);
+      overflow:hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .card:nth-child(2){ animation-delay:0.1s; }
+    .card:nth-child(3){ animation-delay:0.2s; }
+
+    /* ── DEVOTIONAL CARD ── */
+    .devo-card { padding:2rem 2rem 1.5rem; }
+    .devo-label {
+      font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;
+      color:var(--gold); font-weight:600; margin-bottom:0.8rem;
+    }
+    .devo-verse {
+      font-family:'Playfair Display', serif;
+      font-size:clamp(1rem,2.5vw,1.15rem);
+      font-style:italic; color:var(--brown);
+      line-height:1.7; margin-bottom:0.5rem;
+      border-left:3px solid var(--gold);
+      padding-left:1rem;
+    }
+    .devo-ref {
+      font-size:0.8rem; color:var(--muted); margin-left:1rem; margin-bottom:1.4rem;
+    }
+    .devo-title {
+      font-family:'Playfair Display', serif;
+      font-size:1.4rem; font-weight:700;
+      color:var(--brown); margin-bottom:0.8rem;
+    }
+    .devo-text {
+      font-family:'Lora', serif;
+      font-size:0.97rem; line-height:1.85; color:var(--text);
+    }
+    .devo-text p { margin-bottom:0.8rem; }
+    .devo-prayer {
+      margin-top:1.4rem;
+      background:var(--cream);
+      border-radius:14px; padding:1rem 1.2rem;
+    }
+    .devo-prayer-label {
+      font-size:0.72rem; text-transform:uppercase; letter-spacing:0.12em;
+      color:var(--gold); font-weight:600; margin-bottom:0.4rem;
+    }
+    .devo-prayer p {
+      font-family:'Lora', serif;
+      font-size:0.93rem; color:var(--muted); font-style:italic; line-height:1.7;
+    }
+    .devo-loading {
+      display:flex; align-items:center; gap:1rem; padding:2rem 0;
+    }
+    .spinner {
+      width:28px; height:28px; border-radius:50%;
+      border:3px solid var(--cream2);
+      border-top-color:var(--gold);
+      animation: spin 0.8s linear infinite; flex-shrink:0;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .devo-loading span { color:var(--muted); font-size:0.9rem; }
+    .regen-btn {
+      margin-top:1.2rem;
+      display:inline-flex; align-items:center; gap:0.4rem;
+      padding:0.5rem 1.1rem; border-radius:20px;
+      background:transparent; border:1.5px solid var(--warm1);
+      color:var(--brown); cursor:pointer;
+      font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500;
+      transition:all 0.2s;
+    }
+    .regen-btn:hover { background:var(--cream); }
+    .share-row {
+      display:flex; gap:0.6rem; margin-top:1rem; flex-wrap:wrap;
+    }
+    .share-btn {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      padding:0.45rem 1rem; border-radius:20px; border:none;
+      font-family:'DM Sans',sans-serif; font-size:0.8rem; font-weight:500;
+      cursor:pointer; text-decoration:none; transition:transform 0.2s;
+    }
+    .share-btn:hover { transform:translateY(-1px); }
+    .share-wa  { background:#25D366; color:#fff; }
+    .share-ig  { background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color:#fff; }
+    .share-copy{ background:var(--cream2); color:var(--brown); }
+
+    /* ── SIDEBAR: Ayat Hari Ini ── */
+    .verse-stack { display:flex; flex-direction:column; gap:1.2rem; }
+    .verse-mini {
+      background:linear-gradient(135deg,var(--brown),var(--dark));
+      border-radius:16px; padding:1.4rem 1.4rem 1.2rem;
+      color:var(--cream); position:relative; overflow:hidden;
+    }
+    .verse-mini::before {
+      content:'"'; position:absolute; right:1rem; top:-0.5rem;
+      font-size:6rem; font-family:'Playfair Display',serif;
+      color:rgba(255,255,255,0.06); line-height:1; pointer-events:none;
+    }
+    .verse-mini-text {
+      font-family:'Playfair Display',serif;
+      font-style:italic; font-size:0.93rem; line-height:1.65; margin-bottom:0.5rem;
+    }
+    .verse-mini-ref { font-size:0.75rem; color:var(--gold2); font-weight:500; }
+
+    .tips-card { padding:1.4rem; }
+    .tips-card h3 { font-family:'Playfair Display',serif; font-size:1rem; color:var(--brown); margin-bottom:1rem; }
+    .tips-list { list-style:none; display:flex; flex-direction:column; gap:0.6rem; }
+    .tips-list li {
+      display:flex; align-items:flex-start; gap:0.6rem;
+      font-size:0.85rem; color:var(--text); line-height:1.5;
+    }
+    .tips-list li::before { content:'🕊'; font-size:0.9rem; flex-shrink:0; }
+
+    /* ── WORSHIP SONGS ── */
+    .songs-card { padding:1.5rem 1.5rem 1rem; }
+    .songs-header {
+      display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem;
+    }
+    .songs-header h2 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--brown); }
+    .search-box {
+      padding:0.4rem 0.9rem; border-radius:20px;
+      border:1px solid var(--cream2); background:var(--cream);
+      font-family:'DM Sans',sans-serif; font-size:0.82rem; color:var(--text);
+      outline:none; width:160px; transition:width 0.3s;
+    }
+    .search-box:focus { width:200px; border-color:var(--warm1); }
+    .song-list { display:flex; flex-direction:column; gap:0.5rem; }
+    .song-item {
+      display:grid; grid-template-columns:1fr auto;
+      align-items:center; gap:0.8rem;
+      padding:0.75rem 1rem; border-radius:12px;
+      background:var(--cream); cursor:pointer;
+      transition:background 0.2s, transform 0.15s;
+      border:1px solid transparent;
+    }
+    .song-item:hover { background:var(--cream2); transform:translateX(2px); border-color:var(--warm1); }
+    .song-info { min-width:0; }
+    .song-title { font-weight:500; font-size:0.9rem; color:var(--brown); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .song-artist { font-size:0.75rem; color:var(--muted); margin-top:0.1rem; }
+    .song-actions { display:flex; gap:0.4rem; flex-shrink:0; }
+    .icon-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:32px; height:32px; border-radius:50%; border:none;
+      background:var(--white); color:var(--muted); cursor:pointer;
+      font-size:0.85rem; transition:all 0.2s;
+    }
+    .icon-btn:hover { background:var(--warm1); color:#fff; transform:scale(1.1); }
+    .tag-lang {
+      font-size:0.65rem; padding:0.15rem 0.5rem; border-radius:8px;
+      font-weight:600; letter-spacing:0.05em; text-transform:uppercase;
+    }
+    .tag-id { background:#fce8c4; color:#a07850; }
+    .tag-en { background:#d4eaff; color:#4a7ab5; }
+    .songs-more {
+      text-align:center; margin-top:1rem;
+      font-size:0.82rem; color:var(--muted); cursor:pointer; text-decoration:underline;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position:fixed; inset:0; z-index:200;
+      background:rgba(0,0,0,0.45); backdrop-filter:blur(4px);
+      display:flex; align-items:center; justify-content:center;
+      padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.25s;
+    }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal {
+      background:var(--white); border-radius:24px;
+      max-width:600px; width:100%; max-height:80vh;
+      overflow-y:auto; padding:2rem;
+      transform:translateY(20px); transition:transform 0.25s;
+    }
+    .modal-overlay.open .modal { transform:translateY(0); }
+    .modal-header {
+      display:flex; justify-content:space-between; align-items:flex-start;
+      margin-bottom:1.2rem;
+    }
+    .modal-title { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--brown); }
+    .modal-artist { font-size:0.85rem; color:var(--muted); margin-top:0.2rem; }
+    .close-btn {
+      background:var(--cream); border:none; border-radius:50%;
+      width:34px; height:34px; cursor:pointer; font-size:1rem; flex-shrink:0;
+    }
+    .modal-yt {
+      display:block; width:100%; aspect-ratio:16/9;
+      border-radius:12px; border:none; margin-bottom:1.4rem;
+    }
+    .lyric-section { margin-bottom:1rem; }
+    .lyric-section h4 {
+      font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+      color:var(--gold); font-weight:600; margin-bottom:0.6rem;
+    }
+    .lyric-notice {
+      font-family:'Lora',serif; font-style:italic;
+      font-size:0.9rem; color:var(--muted); line-height:1.7;
+      padding:1rem; background:var(--cream); border-radius:10px;
+    }
+    .lyric-link {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      margin-top:0.8rem; padding:0.45rem 1rem;
+      border-radius:20px; background:var(--brown); color:var(--cream);
+      text-decoration:none; font-size:0.82rem; font-weight:500; transition:opacity 0.2s;
+    }
+    .lyric-link:hover { opacity:0.85; }
+
+    /* ── NOTIFICATION MODAL ── */
+    .notif-modal {
+      max-width:400px;
+    }
+    .notif-modal .modal-title { font-size:1.2rem; }
+    .notif-time-row {
+      display:flex; align-items:center; gap:1rem; margin:1.2rem 0;
+    }
+    .time-input {
+      padding:0.6rem 1rem; border-radius:12px;
+      border:1.5px solid var(--cream2); font-size:1.2rem;
+      font-family:'DM Sans',sans-serif; color:var(--brown);
+      background:var(--cream); outline:none;
+    }
+    .time-input:focus { border-color:var(--warm1); }
+    .save-notif-btn {
+      width:100%; padding:0.75rem; border-radius:14px;
+      background:var(--brown); color:var(--white); border:none;
+      font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500;
+      cursor:pointer; transition:opacity 0.2s;
+    }
+    .save-notif-btn:hover { opacity:0.88; }
+    .notif-status { margin-top:0.8rem; font-size:0.82rem; color:var(--muted); text-align:center; }
+
+    /* ── FOOTER ── */
+    footer {
+      position:relative; z-index:1;
+      text-align:center; padding:2rem 1rem;
+      border-top:1px solid var(--cream2);
+      font-size:0.8rem; color:var(--muted);
+    }
+    footer span { color:var(--gold); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">✝ <span>Sabda</span>Pagi</div>
+  <div class="header-right">
+    <div class="lang-switch">
+      <button class="lang-btn active" onclick="setLang('id')">🇮🇩 ID</button>
+      <button class="lang-btn" onclick="setLang('en')">🇺🇸 EN</button>
+    </div>
+    <button class="notif-btn" id="notifBtn" onclick="openNotifModal()">
+      🔔 <span id="notifLabel">Reminder</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="date-badge" id="heroBadge"></div>
+  <h1 id="heroTitle">Renungan <em>Harian</em></h1>
+  <small class="hero-sub" id="heroSub">Mulai hariwmu bersama Firman Tuhan · Start your day with God's Word</small>
+  <span class="divider"></span>
+</section>
+
+<!-- MAIN -->
+<main>
+
+  <!-- DEVOTIONAL -->
+  <div class="card devo-card full-width" style="animation-delay:0s">
+    <div class="devo-label" id="devoLabel">✦ Renungan Hari Ini</div>
+
+    <div id="devoLoading" class="devo-loading">
+      <div class="spinner"></div>
+      <span id="loadingText">Memuat renungan hari ini…</span>
+    </div>
+
+    <div id="devoContent" style="display:none">
+      <blockquote class="devo-verse" id="devoVerse"></blockquote>
+      <div class="devo-ref" id="devoRef"></div>
+      <div class="devo-title" id="devoTitle"></div>
+      <div class="devo-text" id="devoText"></div>
+      <div class="devo-prayer">
+        <div class="devo-prayer-label" id="devoDoaLabel">🙏 Doa</div>
+        <p id="devoPrayer"></p>
+      </div>
+      <div class="share-row">
+        <button class="share-btn share-wa" onclick="shareWA()">💬 WhatsApp</button>
+        <button class="share-btn share-ig" onclick="shareIG()">📸 Instagram</button>
+        <button class="share-btn share-copy" onclick="copyText()">📋 Salin</button>
+        <button class="regen-btn" onclick="loadDevo(true)">↺ <span id="regenLabel">Muat Ulang</span></button>
+      </div>
+    </div>
+
+    <div id="devoError" style="display:none; padding:1rem 0; color:var(--muted); font-size:0.9rem;">
+      ⚠️ Gagal memuat renungan. <a href="#" style="color:var(--warm2)" onclick="loadDevo(true)">Coba lagi</a>
+    </div>
+  </div>
+
+  <!-- SIDEBAR VERSES -->
+  <div style="display:flex; flex-direction:column; gap:1.2rem;">
+    <div class="card">
+      <div class="verse-stack" id="verseStack"></div>
+    </div>
+    <div class="card tips-card">
+      <h3 id="tipsTitle">📖 Tips Saat Teduh</h3>
+      <ul class="tips-list" id="tipsList"></ul>
+    </div>
+  </div>
+
+  <!-- WORSHIP SONGS -->
+  <div class="card songs-card">
+    <div class="songs-header">
+      <h2 id="songsTitle">🎵 Lagu Worship</h2>
+      <input class="search-box" type="text" id="searchInput" placeholder="Cari lagu…" oninput="filterSongs()"/>
+    </div>
+    <div class="song-list" id="songList"></div>
+    <div class="songs-more" id="showMore" onclick="toggleMore()"></div>
+  </div>
+
+</main>
+
+<!-- SONG MODAL -->
+<div class="modal-overlay" id="songModal" onclick="closeSongModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-artist" id="modalArtist"></div>
+      </div>
+      <button class="close-btn" onclick="closeSongModal()">✕</button>
+    </div>
+    <iframe class="modal-yt" id="modalYT" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    <div class="lyric-section">
+      <h4 id="lyricLabel">Lirik / Lyrics</h4>
+      <div class="lyric-notice" id="lyricNotice"></div>
+      <a class="lyric-link" id="lyricLink" target="_blank">📄 <span id="lyricLinkText">Buka Lirik Lengkap</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION MODAL -->
+<div class="modal-overlay" id="notifModal" onclick="closeNotifModal(event)">
+  <div class="modal notif-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="notifModalTitle">🔔 Atur Reminder</div>
+      <button class="close-btn" onclick="closeNotifModal()">✕</button>
+    </div>
+    <p id="notifModalDesc" style="color:var(--muted);font-size:0.9rem;margin-bottom:0.5rem"></p>
+    <div class="notif-time-row">
+      <input type="time" class="time-input" id="notifTime" value="06:00"/>
+    </div>
+    <button class="save-notif-btn" id="saveNotifBtn" onclick="saveNotification()"></button>
+    <div class="notif-status" id="notifStatus"></div>
+  </div>
+</div>
+
+<footer>
+  Dibuat dengan <span>♥</span> untuk Kemuliaan Tuhan &nbsp;·&nbsp; SabdaPagi &copy; 2025
+</footer>
+
+<script>
+/* ────────────────────────────
+   DATA & CONSTANTS
+──────────────────────────────*/
+const SONGS = [
+  { id:'s1',  title:'Way Maker', artist:'Sinach', lang:'en', ytId:'iJCV_2H9xD0', genius:'way-maker-sinach-lyrics' },
+  { id:'s2',  title:'Goodness of God', artist:'Bethel Music / CeCe Winans', lang:'en', ytId:'vHDhCgJvK8c', genius:'bethel-music-goodness-of-god-lyrics' },
+  { id:'s3',  title:'What A Beautiful Name', artist:'Hillsong Worship', lang:'en', ytId:'nQWFzMvCfLE', genius:'hillsong-worship-what-a-beautiful-name-lyrics' },
+  { id:'s4',  title:'Oceans (Where Feet May Fail)', artist:'Hillsong United', lang:'en', ytId:'dy9nwe9i0m4', genius:'hillsong-united-oceans-where-feet-may-fail-lyrics' },
+  { id:'s5',  title:'Build My Life', artist:'Pat Barrett', lang:'en', ytId:'gCGNRvhVt3M', genius:'pat-barrett-build-my-life-lyrics' },
+  { id:'s6',  title:'Reckless Love', artist:'Cory Asbury', lang:'en', ytId:'Sc6SSHuZvQE', genius:'cory-asbury-reckless-love-lyrics' },
+  { id:'s7',  title:'Kau Hadir', artist:'True Worshippers', lang:'id', ytId:'3Oq_4pZiR_k', genius:'true-worshippers-kau-hadir-lyrics' },
+  { id:'s8',  title:'Terpujilah', artist:'JPCC Worship', lang:'id', ytId:'R2QQxVFDZpo', genius:'jpcc-worship-terpujilah-lyrics' },
+  { id:'s9',  title:'Nada Penyembahan', artist:'Nikita', lang:'id', ytId:'dJHIiyV5ypA', genius:'nikita-nada-penyembahan-lyrics' },
+  { id:'s10', title:'Jadilah Tuhan', artist:'True Worshippers', lang:'id', ytId:'Xx2rqMDYFb4', genius:'true-worshippers-jadilah-tuhan-lyrics' },
+  { id:'s11', title:'Dalam HadiratMu', artist:'JPCC Worship', lang:'id', ytId:'LKWDL_nxJXY', genius:'jpcc-worship-dalam-hadirMu-lyrics' },
+  { id:'s12', title:'Sucikan Aku', artist:'Franky Sihombing', lang:'id', ytId:'WbpOHB3zE2s', genius:'franky-sihombing-sucikan-aku-lyrics' },
+  { id:'s13', title:'Desert Song', artist:'Hillsong Worship', lang:'en', ytId:'tVNqsFCy4A4', genius:'hillsong-worship-desert-song-lyrics' },
+  { id:'s14', title:'Holy Spirit', artist:'Bryan & Katie Torwalt', lang:'en', ytId:'yiSFDFCFCdg', genius:'bryan-katie-torwalt-holy-spirit-lyrics' },
+  { id:'s15', title:'This Is Amazing Grace', artist:'Phil Wickham', lang:'en', ytId:'jgKl5skP5kQ', genius:'phil-wickham-this-is-amazing-grace-lyrics' },
+];
+
+const VERSES = [
+  { id:'v1', ref:'Mazmur 46:10', id_text:'Diamlah dan ketahuilah, bahwa Akulah Allah! Aku ditinggikan di antara bangsa-bangsa, ditinggikan di bumi.', en_text:'"Be still, and know that I am God. I will be exalted among the nations, I will be exalted in the earth."' },
+  { id:'v2', ref:'Filipi 4:13', id_text:'Segala perkara dapat kutanggung di dalam Dia yang memberi kekuatan kepadaku.', en_text:'"I can do all things through Christ who strengthens me."' },
+  { id:'v3', ref:'Yeremia 29:11', id_text:'Sebab Aku ini mengetahui rancangan-rancangan apa yang ada pada-Ku mengenai kamu, demikianlah firman TUHAN, yaitu rancangan damai sejahtera dan bukan rancangan kecelakaan.', en_text:'"For I know the plans I have for you," declares the Lord, "plans to prosper you and not to harm you, plans to give you hope and a future."' },
+  { id:'v4', ref:'Roma 8:28', id_text:'Kita tahu sekarang, bahwa Allah turut bekerja dalam segala sesuatu untuk mendatangkan kebaikan bagi mereka yang mengasihi Dia.', en_text:'"And we know that in all things God works for the good of those who love him, who have been called according to his purpose."' },
+];
+
+const TIPS = {
+  id: ['Mulai dengan doa singkat, serahkan waktu ini kepada Tuhan.','Baca ayat pelan-pelan, renungkan maknanya.','Tulis satu hal yang Tuhan bicara kepadamu hari ini.','Akhiri dengan ucapan syukur, sekecil apapun berkatmu.'],
+  en: ['Start with a brief prayer, surrendering this time to God.','Read the verse slowly and meditate on its meaning.','Write down one thing God is speaking to you today.','Close with thanksgiving, no matter how small the blessing.'],
+};
+
+const STRINGS = {
+  id: {
+    devoLabel:'✦ Renungan Hari Ini', loadingText:'Memuat renungan hari ini…', doaLabel:'🙏 Doa',
+    songsTitle:'🎵 Lagu Worship', tipsTitle:'📖 Tips Saat Teduh', regenLabel:'Muat Ulang',
+    lyricLabel:'Lirik', lyricLinkText:'Buka Lirik Lengkap di Genius', heroTitle:'Renungan <em>Harian</em>',
+    heroSub:'Mulai harimu bersama Firman Tuhan', showMore:'Tampilkan lebih banyak →', showLess:'← Tampilkan lebih sedikit',
+    notifLabel:'Reminder', notifModalTitle:'🔔 Atur Reminder Harian', notifModalDesc:'Dapatkan pengingat renungan setiap hari pada jam yang kamu pilih.',
+    saveNotifBtn:'Simpan Pengingat', notifSuccess:'✅ Reminder diatur! Cek notifikasi browser-mu ya.',
+    notifDenied:'❌ Izin notifikasi ditolak. Ubah di pengaturan browser.', notifUnsupported:'⚠️ Browser ini tidak mendukung notifikasi.',
+    copySuccess:'✅ Disalin!', searchPlaceholder:'Cari lagu…', lyricNotice:'Karena hak cipta, lirik lengkap tersedia di platform resmi. Klik tombol di bawah untuk baca liriknya.',
+  },
+  en: {
+    devoLabel:'✦ Today\'s Devotional', loadingText:'Loading today\'s devotional…', doaLabel:'🙏 Prayer',
+    songsTitle:'🎵 Worship Songs', tipsTitle:'📖 Quiet Time Tips', regenLabel:'Reload',
+    lyricLabel:'Lyrics', lyricLinkText:'Open Full Lyrics on Genius', heroTitle:'Daily <em>Devotional</em>',
+    heroSub:'Start your day with God\'s Word', showMore:'Show more →', showLess:'← Show less',
+    notifLabel:'Reminder', notifModalTitle:'🔔 Daily Reminder', notifModalDesc:'Get a daily reminder to read your devotional at a time you choose.',
+    saveNotifBtn:'Save Reminder', notifSuccess:'✅ Reminder set! Check your browser notifications.',
+    notifDenied:'❌ Notification permission denied. Change in browser settings.', notifUnsupported:'⚠️ This browser doesn\'t support notifications.',
+    copySuccess:'✅ Copied!', searchPlaceholder:'Search songs…', lyricNotice:'Due to copyright, full lyrics are available on licensed platforms. Click below to read.',
+  },
+};
+
+/* ────────────────────────────
+   STATE
+──────────────────────────────*/
+let currentLang = 'id';
+let devoData = null;
+let showAllSongs = false;
+let notifInterval = null;
+const SONGS_VISIBLE = 5;
+
+/* ────────────────────────────
+   INIT
+──────────────────────────────*/
+window.addEventListener('DOMContentLoaded', () => {
+  updateHeroBadge();
+  renderVerses();
+  renderTips();
+  renderSongs();
+  loadDevo(false);
+  checkSavedNotif();
+  applyLang();
+});
+
+/* ────────────────────────────
+   LANGUAGE
+──────────────────────────────*/
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  applyLang();
+  renderVerses();
+  renderTips();
+  renderSongs();
+  if(devoData) renderDevo(devoData);
+}
+
+function applyLang() {
+  const s = STRINGS[currentLang];
+  el('devoLabel').textContent = s.devoLabel;
+  el('loadingText').textContent = s.loadingText;
+  el('devoDoaLabel').textContent = s.doaLabel;
+  el('songsTitle').textContent = s.songsTitle;
+  el('tipsTitle').textContent = s.tipsTitle;
+  el('regenLabel').textContent = s.regenLabel;
+  el('notifLabel').textContent = s.notifLabel;
+  el('heroTitle').innerHTML = s.heroTitle;
+  el('heroSub').textContent = s.heroSub;
+  el('searchInput').placeholder = s.searchPlaceholder;
+  const more = el('showMore');
+  if(more) more.textContent = showAllSongs ? s.showLess : s.showMore;
+  el('lyricLabel').textContent = s.lyricLabel;
+  el('lyricLinkText').textContent = s.lyricLinkText;
+  el('notifModalTitle').textContent = s.notifModalTitle;
+  el('notifModalDesc').textContent = s.notifModalDesc;
+  el('saveNotifBtn').textContent = s.saveNotifBtn;
+}
+
+/* ────────────────────────────
+   HERO DATE BADGE
+──────────────────────────────*/
+function updateHeroBadge() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  el('heroBadge').textContent = now.toLocaleDateString('id-ID', opts);
+}
+
+/* ────────────────────────────
+   AI DEVOTIONAL
+──────────────────────────────*/
+async function loadDevo(force=false) {
+  const today = new Date().toISOString().slice(0,10);
+  const cacheKey = `devo_${today}_${currentLang}`;
+  if(!force) {
+    const cached = localStorage.getItem(cacheKey);
+    if(cached) { try { devoData = JSON.parse(cached); renderDevo(devoData); return; } catch(e){} }
+  }
+  showDevoLoading(true);
+  try {
+    const prompt = buildPrompt();
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{ role:'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '';
+    const parsed = parseJSON(raw);
+    if(parsed) {
+      devoData = parsed;
+      localStorage.setItem(cacheKey, JSON.stringify(parsed));
+      renderDevo(parsed);
+    } else { showDevoError(); }
+  } catch(e) { showDevoError(); }
+}
+
+function buildPrompt() {
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const lang = currentLang === 'id' ? 'Indonesian (Bahasa Indonesia)' : 'English';
+  return `You are a Christian devotional writer. Today is ${dateStr}.
+Write a short daily Christian devotional in ${lang} based on a Bible verse.
+Respond ONLY with a valid JSON object, no markdown, no extra text:
+{
+  "verse": "...",
+  "reference": "...",
+  "title": "...",
+  "paragraphs": ["paragraph 1", "paragraph 2", "paragraph 3"],
+  "prayer": "..."
+}
+The devotional should be warm, encouraging, practical, and rooted in the Bible. The verse must be from the actual Bible. Keep paragraphs around 60-80 words each. Prayer around 40-60 words.`;
+}
+
+function parseJSON(raw) {
+  const m = raw.match(/\{[\s\S]*\}/);
+  if(!m) return null;
+  try { return JSON.parse(m[0]); } catch(e) { return null; }
+}
+
+function renderDevo(d) {
+  showDevoLoading(false);
+  el('devoVerse').textContent = `"${d.verse}"`;
+  el('devoRef').textContent = `— ${d.reference}`;
+  el('devoTitle').textContent = d.title;
+  el('devoText').innerHTML = (d.paragraphs||[]).map(p=>`<p>${p}</p>`).join('');
+  el('devoPrayer').textContent = d.prayer;
+  el('devoContent').style.display='block';
+  el('devoError').style.display='none';
+}
+
+function showDevoLoading(show) {
+  el('devoLoading').style.display = show ? 'flex' : 'none';
+  el('devoContent').style.display = show ? 'none' : (devoData ? 'block' : 'none');
+  el('devoError').style.display = 'none';
+}
+
+function showDevoError() {
+  el('devoLoading').style.display='none';
+  el('devoContent').style.display='none';
+  el('devoError').style.display='block';
+}
+
+/* ────────────────────────────
+   SHARE
+──────────────────────────────*/
+function getDevoText() {
+  if(!devoData) return '';
+  return `✝ SabdaPagi · ${devoData.title}\n\n"${devoData.verse}" — ${devoData.reference}\n\n${(devoData.paragraphs||[]).join('\n\n')}\n\n🙏 ${devoData.prayer}`;
+}
+function shareWA() { window.open('https://wa.me/?text='+encodeURIComponent(getDevoText()),'_blank'); }
+function shareIG() {
+  copyText();
+  alert(currentLang==='id'
+    ? '✅ Teks disalin! Buka Instagram dan paste di Story atau postingan kamu.'
+    : '✅ Text copied! Open Instagram and paste in your Story or post.');
+}
+function copyText() {
+  navigator.clipboard.writeText(getDevoText()).then(()=>{
+    const s = STRINGS[currentLang];
+    const btn = event?.target;
+    if(btn){ const orig=btn.textContent; btn.textContent=s.copySuccess; setTimeout(()=>btn.textContent=orig,2000); }
+  });
+}
+
+/* ────────────────────────────
+   VERSES SIDEBAR
+──────────────────────────────*/
+function renderVerses() {
+  const stack = el('verseStack');
+  const today = new Date().getDate();
+  const v = VERSES[today % VERSES.length];
+  const v2 = VERSES[(today+1) % VERSES.length];
+  stack.innerHTML = [v,v2].map(vv=>`
+    <div class="verse-mini">
+      <div class="verse-mini-text">${currentLang==='id'?vv.id_text:vv.en_text}</div>
+      <div class="verse-mini-ref">— ${vv.ref}</div>
+    </div>`).join('');
+}
+
+/* ────────────────────────────
+   TIPS
+──────────────────────────────*/
+function renderTips() {
+  const tips = TIPS[currentLang];
+  el('tipsList').innerHTML = tips.map(t=>`<li>${t}</li>`).join('');
+}
+
+/* ────────────────────────────
+   SONGS
+──────────────────────────────*/
+function filterSongs() {
+  renderSongs(el('searchInput').value.toLowerCase());
+}
+
+function renderSongs(query='') {
+  const filtered = SONGS.filter(s=>
+    s.title.toLowerCase().includes(query) || s.artist.toLowerCase().includes(query)
+  );
+  const visible = showAllSongs ? filtered : filtered.slice(0, SONGS_VISIBLE);
+  const list = el('songList');
+  list.innerHTML = visible.map(s=>`
+    <div class="song-item" onclick="openSong('${s.id}')">
+      <div class="song-info">
+        <div class="song-title">${s.title}</div>
+        <div class="song-artist">${s.artist} &nbsp; <span class="tag-lang tag-${s.lang}">${s.lang.toUpperCase()}</span></div>
+      </div>
+      <div class="song-actions">
+        <button class="icon-btn" title="YouTube" onclick="event.stopPropagation();openSong('${s.id}')">▶</button>
+        <button class="icon-btn" title="Lirik" onclick="event.stopPropagation();openSong('${s.id}',true)">📄</button>
+      </div>
+    </div>`).join('');
+  const s = STRINGS[currentLang];
+  const more = el('showMore');
+  if(filtered.length > SONGS_VISIBLE) {
+    more.textContent = showAllSongs ? s.showLess : s.showMore;
+    more.style.display='block';
+  } else { more.style.display='none'; }
+}
+
+function toggleMore() {
+  showAllSongs = !showAllSongs;
+  filterSongs();
+}
+
+function openSong(id, scrollLyric=false) {
+  const s = SONGS.find(x=>x.id===id);
+  if(!s) return;
+  el('modalTitle').textContent = s.title;
+  el('modalArtist').textContent = s.artist;
+  el('modalYT').src = `https://www.youtube.com/embed/${s.ytId}?autoplay=1`;
+  const str = STRINGS[currentLang];
+  el('lyricNotice').textContent = str.lyricNotice;
+  el('lyricLinkText').textContent = str.lyricLinkText;
+  el('lyricLink').href = `https://genius.com/songs/${s.genius}`;
+  el('songModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeSongModal(e) {
+  if(e && e.target!==el('songModal') && e.type!=='click') return;
+  if(e && e.currentTarget===el('songModal') && e.target!==el('songModal')) return;
+  el('songModal').classList.remove('open');
+  el('modalYT').src='';
+  document.body.style.overflow='';
+}
+
+/* ────────────────────────────
+   NOTIFICATIONS
+──────────────────────────────*/
+function openNotifModal() { el('notifModal').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeNotifModal(e) {
+  if(e && e.target!==el('notifModal') && e.type!=='click') return;
+  if(e && e.currentTarget===el('notifModal') && e.target!==el('notifModal')) return;
+  el('notifModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function checkSavedNotif() {
+  const saved = localStorage.getItem('notif_time');
+  if(saved) {
+    el('notifTime').value = saved;
+    el('notifBtn').classList.add('active-notif');
+    scheduleNotif(saved);
+  }
+}
+
+async function saveNotification() {
+  const s = STRINGS[currentLang];
+  const time = el('notifTime').value;
+  if(!('Notification' in window)) { el('notifStatus').textContent = s.notifUnsupported; return; }
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted') {
+    localStorage.setItem('notif_time', time);
+    el('notifStatus').textContent = s.notifSuccess;
+    el('notifBtn').classList.add('active-notif');
+    scheduleNotif(time);
+    setTimeout(()=>closeNotifModal(), 2000);
+  } else { el('notifStatus').textContent = s.notifDenied; }
+}
+
+function scheduleNotif(timeStr) {
+  if(notifInterval) clearInterval(notifInterval);
+  notifInterval = setInterval(() => {
+    const now = new Date();
+    const [h,m] = timeStr.split(':').map(Number);
+    if(now.getHours()===h && now.getMinutes()===m && now.getSeconds()<5) {
+      const lang = currentLang;
+      new Notification(lang==='id'?'✝ SabdaPagi':'✝ SabdaPagi Daily', {
+        body: lang==='id'
+          ? 'Waktunya baca renungan harian kamu! Mulai hari dengan Firman Tuhan. 🙏'
+          : 'Time for your daily devotional! Start your day with God\'s Word. 🙏',
+        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%236b4c2a'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='36' fill='%23d4a84b'%3E✝%3C/text%3E%3C/svg%3E"
+      });
+    }
+  }, 5000);
+}
+
+/* ────────────────────────────
+   UTILS
+──────────────────────────────*/
+function el(id) { return document.getElementById(id); }
+</script>
+</body>
+</html>
